@@ -1,0 +1,118 @@
+---
+import "@/styles/global.css";
+
+import archivo from "@fontsource-variable/archivo/files/archivo-latin-wght-normal.woff2?url";
+import inter from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import inconsolata from "@fontsource-variable/inconsolata/files/inconsolata-latin-wght-normal.woff2";
+
+import { getCollection } from "astro:content";
+import { sortBy, prop } from "remeda";
+
+const projects = sortBy(await getCollection("projects"), [
+  prop("data", "order"),
+  "asc",
+]);
+
+import { Image } from "astro:assets";
+import { LinkIcon } from "@lucide/astro";
+import SquidIcon from "@/assets/icon.svg";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>shr.ink oü</title>
+    {
+      [inter, inconsolata, archivo].map((woff2) => (
+        <link
+          rel="preload"
+          as="font"
+          type="font/woff2"
+          href={woff2}
+          crossorigin="anonymous"
+        />
+      ))
+    }
+  </head>
+  <body class="font-sans antialiased">
+    <ul
+      role="list"
+      class="grid grid-cols-1 gap-x-12 gap-y-16 p-8 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
+    >
+      <li class="relative flex h-full flex-row gap-x-6">
+        <Image
+          src={SquidIcon}
+          alt="shr.ink oü logo"
+          class="size-30 w-min"
+          height={700}
+          width={640}
+        />
+        <div class="group relative flex h-full flex-col items-start gap-y-2">
+          <h2 class="text-base font-semibold text-zinc-800 dark:text-zinc-100">
+            <span class="font-display relative z-10">shr.ink oü</span>
+          </h2>
+          <p
+            class="relative z-10 grow text-sm text-zinc-600 dark:text-zinc-400"
+          >
+            websites, widgets and whatever for the www.
+          </p>
+        </div>
+      </li>
+      {
+        projects.map(({ data: { link, icon, name, description, defunct } }) => (
+          <li
+            class:list={[
+              "group pointer-events-none relative flex h-full flex-col items-start gap-y-2",
+              defunct && "opacity-50 grayscale select-none",
+            ]}
+          >
+            <h2 class="font-display text-base font-semibold text-zinc-800">
+              <a href={link.href} target="_blank">
+                {!defunct && (
+                  <div class="pointer-events-auto absolute -inset-x-4 -inset-y-6 z-0 scale-95 cursor-pointer bg-pink-50 opacity-0 transition group-hover:scale-100 group-hover:opacity-100 sm:-inset-x-6 sm:rounded-2xl" />
+                )}
+                <span class="relative flex items-center gap-x-1 align-middle">
+                  {() => {
+                    switch (icon.type) {
+                      case "string":
+                        return icon.string;
+                      case "favicon":
+                      case "url":
+                        return (
+                          <Image
+                            src={
+                              icon.type === "favicon"
+                                ? `https://favicon.im/${icon.domain}`
+                                : icon.url
+                            }
+                            class="size-4"
+                            width={48}
+                            height={48}
+                            alt={`${name} icon`}
+                            loading="lazy"
+                          />
+                        );
+                    }
+                  }}
+
+                  {name}
+                </span>
+              </a>
+            </h2>
+
+            <p class="relative min-h-[3lh] grow text-sm text-zinc-600">
+              {description}
+            </p>
+            <div class="relative flex content-start items-center space-x-2 text-sm font-medium text-zinc-400 transition group-hover:text-pink-600">
+              <LinkIcon class="size-3.5" /> <span>{link.label}</span>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </body>
+</html>
