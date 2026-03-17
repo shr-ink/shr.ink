@@ -118,3 +118,23 @@ import SquidIcon from "@/assets/icon.svg";
     </ul>
   </body>
 </html>
+
+<script>
+  import { track } from "@vercel/analytics";
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+
+    if (!(target instanceof Element)) {
+      return;
+    }
+
+    const link = target.closest("a");
+
+    if (!link) {
+      return;
+    }
+
+    track("click", { href: link.href });
+  });
+</script>
