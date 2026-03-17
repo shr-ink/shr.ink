@@ -13,6 +13,7 @@ const projects = sortBy(await getCollection("projects"), [
   "asc",
 ]);
 
+import Analytics from "@vercel/analytics/astro";
 import { Image } from "astro:assets";
 import { LinkIcon } from "@lucide/astro";
 import SquidIcon from "@/assets/icon.svg";
@@ -37,6 +38,7 @@ import SquidIcon from "@/assets/icon.svg";
         />
       ))
     }
+    <Analytics />
   </head>
   <body class="font-sans antialiased">
     <ul
@@ -116,3 +118,23 @@ import SquidIcon from "@/assets/icon.svg";
     </ul>
   </body>
 </html>
+
+<script>
+  import { track } from "@vercel/analytics";
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+
+    if (!(target instanceof Element)) {
+      return;
+    }
+
+    const link = target.closest("a");
+
+    if (!link) {
+      return;
+    }
+
+    track("click", { href: link.href });
+  });
+</script>
