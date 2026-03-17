@@ -13,6 +13,7 @@ const projects = sortBy(await getCollection("projects"), [
   "asc",
 ]);
 
+import Analytics from "@vercel/analytics/astro";
 import { Image } from "astro:assets";
 import { LinkIcon } from "@lucide/astro";
 import SquidIcon from "@/assets/icon.svg";
@@ -37,6 +38,7 @@ import SquidIcon from "@/assets/icon.svg";
         />
       ))
     }
+    <Analytics />
   </head>
   <body class="font-sans antialiased">
     <ul
